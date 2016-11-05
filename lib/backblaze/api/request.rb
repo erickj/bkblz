@@ -4,6 +4,7 @@ module Backblaze
   module Api
 
     TooManyRedirectError = Class.new Backblaze::BaseError
+    HTTPRequestError = Class.new Backblaze::BaseError
 
     class Request
 
@@ -12,32 +13,42 @@ module Backblaze
           @response_class = klass unless klass.nil?
           @response_class
         end
+
+        def url_suffix(suffix=nil)
+          @url_suffix = suffix unless suffix.nil?
+          @url_suffix
+        end
       end
 
-      attr_reader :session
-
-      def initialize(session)
-        @session = session
-        raise 'no response class configured' unless self.class.response_class
-      end
-
-      def send
-        request = build_request
+      def send(session)
+        request = build_request session
+        Backblaze.log.debug { "sending request => #{request} to URI => #{request.uri}" }
         http = Net::HTTP.new(request.uri.host, request.uri.port)
         http.use_ssl = true
-        http.set_debug_output(STDERR) if @session.config.debug_http
+        http.set_debug_output(STDERR) if session.config.debug_http
 
         build_response fetch(http, request)
       end
 
       protected
 
-      def build_request
+      def build_request(session)
         raise 'not implemented'
       end
 
       def build_response(response)
-        self.class.response_class.new response
+        unless response.kind_of? Net::HTTPSuccess
+          raise Backblaze::Api::HTTPRequestError, response
+        end
+        Backblaze.log.debug { "#build_response => #{response}" }
+
+        response_class = self.class.response_class || Api::Response
+        response_class.new response
+      end
+
+      def url(session)
+        raise "no URL suffix for #{self.class}" unless self.class.url_suffix
+        session.create_url(self.class.url_suffix)
       end
 
       private

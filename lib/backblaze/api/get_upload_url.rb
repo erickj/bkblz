@@ -1,16 +1,22 @@
 module Backblaze
   module Api
-    class GetUploadUrl < Request
-      # require 'json'
-      # require 'net/http'
 
-      # api_url = "" # Provided by b2_authorize_account
-      # account_authorization_token = "" # Provided by b2_authorize_account
-      # bucket_id = "" # The ID of the bucket you want to upload your file to
-      # uri = URI("#{api_url}/b2api/v1/b2_get_upload_url")
-      # req = Net::HTTP::Post.new(uri)
-      # req.add_field("Authorization","#{account_authorization_token}")
-      # req.body = "{\"bucketId\":\"#{bucket_id}\"}"
+    class GetUploadUrlResponse < Response
+      response_model Model::UploadAuth
+    end
+
+    class GetUploadUrlRequest < Request
+
+      response_class Api::GetUploadUrlResponse
+      url_suffix "/b2api/v1/b2_get_upload_url"
+
+      def initialize(bucket_id)
+        @body = {:bucket_id => bucket_id}
+      end
+
+      def build_request(session)
+        session.create_post url(session), @body
+      end
     end
   end
 end

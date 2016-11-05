@@ -1,22 +1,21 @@
 module Backblaze
   module Api
     class AuthorizeAccountResponse < Response
-      response_accessors \
-        :account_id,
-        :api_url,
-        :authorization_token,
-        :download_url,
-        :minimum_part_size
+      response_accessors :account_id,
+                         :api_url,
+                         :authorization_token,
+                         :download_url,
+                         :minimum_part_size
     end
 
     class AuthorizeAccountRequest < Request
 
-      API_URI = "https://api.backblazeb2.com/b2api/v1/b2_authorize_account"
+      API_URL = "https://api.backblazeb2.com/b2api/v1/b2_authorize_account"
 
       response_class Api::AuthorizeAccountResponse
 
-      def build_request
-        req = Net::HTTP::Get.new URI.parse(API_URI)
+      def build_request(session)
+        req = Net::HTTP::Get.new URI(API_URL)
         req.basic_auth(session.config.account_id, session.config.application_key)
         req
       end

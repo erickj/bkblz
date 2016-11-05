@@ -11,6 +11,12 @@ module Backblaze
       def demodulize
         self.split('::').last
       end
+
+      def camelcase
+        self.gsub /_(.)/ do |match|
+          match[1].upcase
+        end
+      end
     end
   end
 end

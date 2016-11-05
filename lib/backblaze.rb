@@ -33,6 +33,3 @@ module Backblaze
     end
   end
 end
-
-
-
