@@ -11,7 +11,7 @@ module Backblaze
         def run_authorized(config, &block)
           session = Session.new config
           session.auth_response =
-            session.send_request Backblaze::Api::AuthorizeAccountRequest.new
+            session.send Backblaze::Api::AuthorizeAccountRequest.new
 
           yield(session) if block_given?
         end
@@ -23,7 +23,7 @@ module Backblaze
         @config = config
       end
 
-      def send_request(request)
+      def send(request)
         request.send self
       end
 

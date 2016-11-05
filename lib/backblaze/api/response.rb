@@ -56,6 +56,10 @@ module Backblaze
         Backblaze.log.debug { "parsed response => #{@response}" }
       end
 
+      def [](key)
+        @response[key]
+      end
+
       def to_model
         raise 'no response model defined' unless self.class.response_model
         self.class.response_model.new @response.dup
@@ -71,6 +75,36 @@ module Backblaze
                                    :max_nesting => 4
                                  }
         Backblaze::MapKeyFormatter.underscore_keys parsed_json
+      end
+    end
+
+    class PaginatedResponse < Response
+
+      NoMorePagesError = Class.new Backblaze::BaseError
+
+      class << self
+
+        attr_reader :pagination_fields
+        def pagination_accessors(*pagination_fields)
+          response_accessors *pagination_fields
+
+          @pagination_fields ||= []
+          @pagination_fields.concat pagination_fields
+        end
+      end
+
+      def has_more?
+        self.class.pagination_fields.any? { |f| !self[f].nil? }
+      end
+
+      def next_request(limit=nil)
+        raise NoMorePagesError unless has_more?
+        build_next_request(limit)
+      end
+
+      private
+      def build_next_request(limit)
+        raise "not implemented"
       end
     end
   end
