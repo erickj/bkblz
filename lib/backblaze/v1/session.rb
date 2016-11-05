@@ -1,19 +1,20 @@
 require 'uri'
 
 module Backblaze
-  module Api
+  module V1
 
     SessionNotAuthorizedError = Class.new Backblaze::BaseError
 
     class Session
 
       class << self
-        def run_authorized(config, &block)
+        def authorize(config, &block)
           session = Session.new config
           session.auth_response =
-            session.send Backblaze::Api::AuthorizeAccountRequest.new
+            session.send Backblaze::V1::AuthorizeAccountRequest.new
 
           yield(session) if block_given?
+          session
         end
       end
 

@@ -7,8 +7,8 @@ module Backblaze
       :account_id => '',
       :debug_http => false,
 
-      :log_device => :stderr,
-      :log_level => :warn,
+      :log_device => :stderr, # [:stdout, :stderr, :devnull, path, fd]
+      :log_level => :warn, # [:debug, :info, :warn, :error, :fatal, (-6..-1)]
       :log_colorize => true
     }.freeze
 

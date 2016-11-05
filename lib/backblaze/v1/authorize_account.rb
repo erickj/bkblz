@@ -1,5 +1,5 @@
 module Backblaze
-  module Api
+  module V1
     class AuthorizeAccountResponse < Response
       response_accessors :account_id,
                          :api_url,
@@ -12,7 +12,7 @@ module Backblaze
 
       API_URL = "https://api.backblazeb2.com/b2api/v1/b2_authorize_account"
 
-      response_class Api::AuthorizeAccountResponse
+      response_class AuthorizeAccountResponse
 
       def build_request(session)
         req = Net::HTTP::Get.new URI(API_URL)

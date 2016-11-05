@@ -1,7 +1,7 @@
 require "digest/sha1"
 
 module Backblaze
-  module Api
+  module V1
 
     TooManyBzInfoHeadersError = Class.new Backblaze::BaseError
 
@@ -11,7 +11,7 @@ module Backblaze
 
     class UploadFileRequest < Request
 
-      response_class Api::UploadFileResponse
+      response_class UploadFileResponse
 
       REQUIRED_HEADERS = {
                           :"Authorization" => nil,

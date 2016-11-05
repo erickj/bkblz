@@ -1,7 +1,7 @@
 require 'net/http'
 
 module Backblaze
-  module Api
+  module V1
 
     TooManyRedirectError = Class.new Backblaze::BaseError
 
@@ -43,12 +43,12 @@ module Backblaze
 
       def build_response(response)
         unless response.kind_of? Net::HTTPSuccess
-          error_response = Api::ErrorResponse.new response, self
-          raise Backblaze::Api::RequestError.new error_response
+          error_response = ErrorResponse.new response, self
+          raise RequestError.new error_response
         end
         Backblaze.log.debug { "#build_response => #{response}" }
 
-        response_class = self.class.response_class || Api::Response
+        response_class = self.class.response_class || Response
         response_class.new response, self
       end
 
@@ -70,8 +70,8 @@ module Backblaze
           response
         when Net::HTTPRedirection then
           location = response['location']
-          warn "redirected to #{location}"
-          fetch(http, location, limit - 1)
+          Backblaze.log.warn "redirected to #{location}"
+          fetch http, location, limit - 1
         else
           response
         end

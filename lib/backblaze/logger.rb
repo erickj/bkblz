@@ -45,6 +45,8 @@ module Backblaze
           STDERR
         when :stdout
           STDOUT
+        when :devnull
+          File.open File::NULL, "w"
         when Integer
           IO.new device_value, 'a'
         when String

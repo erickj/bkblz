@@ -1,7 +1,7 @@
 require 'json'
 
 module Backblaze
-  module Api
+  module V1
     class Response
 
       MissingResponseError = Class.new Backblaze::BaseError
@@ -72,8 +72,6 @@ module Backblaze
 
       private
       def parse(http_response)
-        Backblaze.log.info "content-type => #{http_response['content-type']}"
-
         parsed_json = JSON.parse http_response.body, {
                                    :allow_nan => true,
                                    :symbolize_names => true,

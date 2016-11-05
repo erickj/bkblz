@@ -1,8 +1,8 @@
 module Backblaze
-  module Api
+  module V1
     class ErrorResponse < Response
 
-      response_model Model::Error
+      response_model V1::Model::Error
 
       ERROR_TYPE = {
         400 => :BAD_REQUEST,

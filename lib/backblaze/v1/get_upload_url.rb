@@ -1,5 +1,5 @@
 module Backblaze
-  module Api
+  module V1
 
     class GetUploadUrlResponse < Response
       response_model Model::UploadAuth
@@ -7,7 +7,7 @@ module Backblaze
 
     class GetUploadUrlRequest < Request
 
-      response_class Api::GetUploadUrlResponse
+      response_class GetUploadUrlResponse
       url_suffix "/b2api/v1/b2_get_upload_url"
 
       def initialize(bucket_id)

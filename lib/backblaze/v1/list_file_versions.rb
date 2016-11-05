@@ -1,12 +1,13 @@
 module Backblaze
-  module Api
+  module V1
 
     class ListFileVersionsResponse < PaginatedResponse
       response_accessor :files, Model::FileInfo
       pagination_accessors :next_file_name, :next_file_id
 
       def build_next_request(limit)
-        ListFileVersionsRequest.new self.bucket_id, limit, self
+        bucket = original_request.bucket
+        ListFileVersionsRequest.new bucket, limit, self
       end
     end
 
@@ -15,13 +16,16 @@ module Backblaze
       response_class ListFileVersionsResponse
       url_suffix "/b2api/v1/b2_list_file_versions"
 
+      attr_reader :bucket
+
       def initialize(bucket, max_file_count=1000, paginate_from=nil)
+        @bucket = bucket
         @body = {}
         @body[:bucket_id] = bucket.bucket_id
-        @max_file_count = max_file_count
+        @body[:max_file_count] = max_file_count
 
         if paginate_from
-          raise 'invalid paginator' unless paginate_from.is_a? ListBucketsResponse
+          raise 'invalid paginator' unless paginate_from.is_a? ListFileVersionsResponse
 
           next_file_name = paginate_from.next_file_name
           next_file_id = paginate_from.next_file_id

@@ -1,18 +1,18 @@
 module Backblaze
-  module Api
+  module V1
 
     class DeleteFileVersionResponse < Response
       response_model Model::PartialFileInfo
     end
 
-    class DeleteBucketRequest < Request
+    class DeleteFileVersionRequest < Request
 
-      response_class Api::DeleteFileVersionResponse
+      response_class DeleteFileVersionResponse
       url_suffix "/b2api/v1/b2_delete_file_version"
 
-      def initialize(bucket_model)
-        @body = {:bucket_id => bucket_model.bucket_id,
-                 :account_id => bucket_model.account_id}
+      def initialize(short_file_info)
+        @body = {:file_name => short_file_info.file_name,
+                 :file_id => short_file_info.file_id}
       end
 
       def build_request(session)

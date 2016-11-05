@@ -1,5 +1,5 @@
 module Backblaze
-  module Api
+  module V1
 
     class CreateBucketResponse < Response
       response_model Model::Bucket
@@ -7,7 +7,7 @@ module Backblaze
 
     class CreateBucketRequest < Request
 
-      response_class Api::CreateBucketResponse
+      response_class CreateBucketResponse
       url_suffix "/b2api/v1/b2_create_bucket"
 
       def initialize(bucket_model)

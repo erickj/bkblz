@@ -1,5 +1,5 @@
 module Backblaze
-  module Api
+  module V1
 
     class ListBucketsResponse < Response
       response_accessor :buckets, Model::Bucket
@@ -7,7 +7,7 @@ module Backblaze
 
     class ListBucketsRequest < Request
 
-      response_class Api::ListBucketsResponse
+      response_class ListBucketsResponse
       url_suffix "/b2api/v1/b2_list_buckets"
 
       def build_request(session)
