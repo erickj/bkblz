@@ -52,6 +52,6 @@ Backblaze::Api::Session.run_authorized Backblaze.config do |api_session|
     Backblaze.log.info "files => #{bucket_files_info.join "\n"}"
   end
 
-  delete = Backblaze::Api::DeleteBucketRequest.new bucket
+  delete = api_session.send Backblaze::Api::DeleteBucketRequest.new bucket
   Backblaze.log.info "deleted bucket => #{bucket}"
 end

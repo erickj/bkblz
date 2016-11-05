@@ -40,29 +40,34 @@ module Backblaze
           end
 
           define_method response_field do |*args|
-            raise MissingResponseError unless @response
+            raise MissingResponseError unless @parsed_response
             return @cache[response_field] if @cache.key? response_field
 
-            value = @response[response_field]
+            value = @parsed_response[response_field]
             @cache[response_field] = api_value_transformer.call value
           end
         end
       end
 
-      def initialize(http_response)
+      def initialize(http_response, original_request)
         @http_response = http_response
-        @response = parse http_response
+        @original_request = original_request
+
+        @parsed_response = parse http_response
         @cache = {}
-        Backblaze.log.debug { "parsed response => #{@response}" }
+        Backblaze.log.debug { "parsed response => #{@parsed_response}" }
       end
 
+      attr_reader :original_request
+      protected :original_request
+
       def [](key)
-        @response[key]
+        @parsed_response[key]
       end
 
       def to_model
         raise 'no response model defined' unless self.class.response_model
-        self.class.response_model.new @response.dup
+        self.class.response_model.new @parsed_response.dup
       end
 
       private

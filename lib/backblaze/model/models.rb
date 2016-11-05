@@ -15,7 +15,13 @@ module Backblaze
       :file_id, :file_info, :file_name
     ]
 
+    # Returned by delete_file_version
+    PartialFileInfo = Model.define :file_id, :file_name
+
     # Returned by get_upload_url
     UploadAuth = Model.define :bucket_id, :upload_url, :authorization_token
+
+    # Possibly returned by any request
+    Error = Model.define :status, :code, :message
   end
 end

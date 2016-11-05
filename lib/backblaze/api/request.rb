@@ -4,7 +4,12 @@ module Backblaze
   module Api
 
     TooManyRedirectError = Class.new Backblaze::BaseError
-    HTTPRequestError = Class.new Backblaze::BaseError
+
+    class RequestError < Backblaze::BaseError
+      def initialize(error_response)
+        super error_response.message
+      end
+    end
 
     class Request
 
@@ -38,12 +43,13 @@ module Backblaze
 
       def build_response(response)
         unless response.kind_of? Net::HTTPSuccess
-          raise Backblaze::Api::HTTPRequestError, response
+          error_response = Api::ErrorResponse.new response, self
+          raise Backblaze::Api::RequestError.new error_response
         end
         Backblaze.log.debug { "#build_response => #{response}" }
 
         response_class = self.class.response_class || Api::Response
-        response_class.new response
+        response_class.new response, self
       end
 
       def url(session)
