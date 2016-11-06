@@ -6,10 +6,22 @@ module Bkblz
     TooManyRedirectError = Class.new Bkblz::BaseError
 
     class RequestError < Bkblz::BaseError
+
+      def self.create(error_response)
+        case error_response.to_model.status
+        when 401
+          UnauthorizedRequestError.new error_response
+        else
+          RequestError.new error_response
+        end
+      end
+
       def initialize(error_response)
         super error_response.message
       end
     end
+
+    UnauthorizedRequestError = Class.new RequestError
 
     class Request
 
@@ -44,7 +56,7 @@ module Bkblz
       def build_response(response)
         unless response.kind_of? Net::HTTPSuccess
           error_response = ErrorResponse.new response, self
-          raise RequestError.new error_response
+          raise RequestError.create error_response
         end
         Bkblz.log.debug { "#build_response => #{response}" }
 

@@ -23,6 +23,14 @@ module Bkblz
       rescue Bkblz::Task::MissingBucketError => e
         STDERR.puts "Unknown bucket: #{e.message}"
         exit 1
+      rescue Bkblz::V1::UnauthorizedRequestError => e
+        msg = if options[:config]
+                "bad account id or application key, check your auth credentials"
+              else
+                "use '-c path/to/config.yml' to supply credentials"
+              end
+        STDERR.puts "Unauthorized request: #{msg}"
+        exit 1
       end
     end
 
@@ -44,7 +52,9 @@ module Bkblz
     def list
       parse_opts
 
-      buckets = Bkblz::Task::ListBuckets.run Bkblz.config
+      buckets = run_task do
+        Bkblz::Task::ListBuckets.run Bkblz.config
+      end
 
       print_header "Buckets"
       buckets.each do |bucket|
@@ -56,7 +66,9 @@ module Bkblz
     def create(bucket_name)
       parse_opts
 
-      bucket = Bkblz::Task::CreateBucket.run Bkblz.config, :bucket_name => bucket_name
+      bucket = run_task do
+        Bkblz::Task::CreateBucket.run Bkblz.config, :bucket_name => bucket_name
+      end
       print_header "New Bucket"
       print_model bucket
     end
@@ -69,16 +81,16 @@ module Bkblz
     def upload(bucket_name, local_file_path)
       parse_opts
 
-      run_task do
-        file_info = Bkblz::Task::UploadFile.run Bkblz.config, {
+      file_info = run_task do
+        Bkblz::Task::UploadFile.run Bkblz.config, {
                                                   :bucket_handle => bucket_name,
                                                   :handle_type => :bucket_name,
                                                   :file_path => local_file_path
                                                 }
-
-        print_header "File Info"
-        print_model file_info
       end
+
+      print_header "File Info"
+      print_model file_info
     end
 
     desc "file list <bucket_name>", "lists files in a bucket"
