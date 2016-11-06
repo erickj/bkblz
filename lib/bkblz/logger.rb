@@ -1,6 +1,6 @@
 require 'logger'
 
-module Backblaze
+module Bkblz
   class Logger
     COLOR_MAP = {
       :d => :green,

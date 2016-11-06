@@ -1,4 +1,4 @@
-module Backblaze
+module Bkblz
   module V1
     class AuthorizeAccountResponse < Response
       response_accessors :account_id,
@@ -10,7 +10,7 @@ module Backblaze
 
     class AuthorizeAccountRequest < Request
 
-      API_URL = "https://api.backblazeb2.com/b2api/v1/b2_authorize_account"
+      API_URL = "https://api.backblaze.com/b2api/v1/b2_authorize_account"
 
       response_class AuthorizeAccountResponse
 

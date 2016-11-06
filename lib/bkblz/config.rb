@@ -1,4 +1,4 @@
-module Backblaze
+module Bkblz
 
   class Config
 

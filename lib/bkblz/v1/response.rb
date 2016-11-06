@@ -1,10 +1,10 @@
 require 'json'
 
-module Backblaze
+module Bkblz
   module V1
     class Response
 
-      MissingResponseError = Class.new Backblaze::BaseError
+      MissingResponseError = Class.new Bkblz::BaseError
 
       attr_reader :parsed_body, :http_response
 
@@ -24,7 +24,7 @@ module Backblaze
         def response_accessor(response_field, model_klass=nil, &block)
           api_map_key_converter = lambda do |map|
             raise "not a Hash" unless map.is_a? Hash
-            Backblaze::MapKeyFormatter.underscore_keys map
+            Bkblz::MapKeyFormatter.underscore_keys map
           end
           api_value_transformer = lambda do |value|
             return value unless model_klass || block_given?
@@ -55,7 +55,7 @@ module Backblaze
 
         @parsed_response = parse http_response
         @cache = {}
-        Backblaze.log.debug { "parsed response => #{@parsed_response}" }
+        Bkblz.log.debug { "parsed response => #{@parsed_response}" }
       end
 
       attr_reader :original_request
@@ -77,13 +77,13 @@ module Backblaze
                                    :symbolize_names => true,
                                    :max_nesting => 4
                                  }
-        Backblaze::MapKeyFormatter.underscore_keys parsed_json
+        Bkblz::MapKeyFormatter.underscore_keys parsed_json
       end
     end
 
     class PaginatedResponse < Response
 
-      NoMorePagesError = Class.new Backblaze::BaseError
+      NoMorePagesError = Class.new Bkblz::BaseError
 
       class << self
 

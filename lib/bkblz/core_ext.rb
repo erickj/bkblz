@@ -1,4 +1,4 @@
-module Backblaze
+module Bkblz
   module CoreExt
     refine String do
       def underscore

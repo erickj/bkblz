@@ -1,4 +1,4 @@
-module Backblaze
+module Bkblz
   module V1
 
     class ListBucketsResponse < Response

@@ -1,11 +1,11 @@
 require 'net/http'
 
-module Backblaze
+module Bkblz
   module V1
 
-    TooManyRedirectError = Class.new Backblaze::BaseError
+    TooManyRedirectError = Class.new Bkblz::BaseError
 
-    class RequestError < Backblaze::BaseError
+    class RequestError < Bkblz::BaseError
       def initialize(error_response)
         super error_response.message
       end
@@ -27,7 +27,7 @@ module Backblaze
 
       def send(session)
         request = build_request session
-        Backblaze.log.debug { "sending request => #{request} to URI => #{request.uri}" }
+        Bkblz.log.debug { "sending request => #{request} to URI => #{request.uri}" }
         http = Net::HTTP.new(request.uri.host, request.uri.port)
         http.use_ssl = true
         http.set_debug_output(STDERR) if session.config.debug_http
@@ -46,7 +46,7 @@ module Backblaze
           error_response = ErrorResponse.new response, self
           raise RequestError.new error_response
         end
-        Backblaze.log.debug { "#build_response => #{response}" }
+        Bkblz.log.debug { "#build_response => #{response}" }
 
         response_class = self.class.response_class || Response
         response_class.new response, self
@@ -70,7 +70,7 @@ module Backblaze
           response
         when Net::HTTPRedirection then
           location = response['location']
-          Backblaze.log.warn "redirected to #{location}"
+          Bkblz.log.warn "redirected to #{location}"
           fetch http, location, limit - 1
         else
           response

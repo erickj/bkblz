@@ -1,19 +1,19 @@
-require "backblaze/config"
-require "backblaze/logger"
+require "bkblz/config"
+require "bkblz/logger"
 
-module Backblaze
+module Bkblz
 
   BaseError = Class.new ::StandardError
 
   class << self
     def configure(&block)
-      @config = Backblaze::Config.configure @config, &block
+      @config = Bkblz::Config.configure @config, &block
       config_changed
     end
 
     def config
       unless @config
-        @config = Backblaze::Config.configure
+        @config = Bkblz::Config.configure
         config_changed
       end
       @config
@@ -29,7 +29,7 @@ module Backblaze
     end
 
     def config_logger
-      @logger = Backblaze::Logger.configure config
+      @logger = Bkblz::Logger.configure config
     end
   end
 end

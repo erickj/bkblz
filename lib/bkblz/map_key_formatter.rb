@@ -1,6 +1,6 @@
-module Backblaze
+module Bkblz
   class MapKeyFormatter
-    using Backblaze::CoreExt
+    using Bkblz::CoreExt
 
     def self.underscore_keys(map)
       modified_map = {}

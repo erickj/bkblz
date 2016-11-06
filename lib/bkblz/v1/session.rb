@@ -1,9 +1,9 @@
 require 'uri'
 
-module Backblaze
+module Bkblz
   module V1
 
-    SessionNotAuthorizedError = Class.new Backblaze::BaseError
+    SessionNotAuthorizedError = Class.new Bkblz::BaseError
 
     class Session
 
@@ -11,7 +11,7 @@ module Backblaze
         def authorize(config, &block)
           session = Session.new config
           session.auth_response =
-            session.send Backblaze::V1::AuthorizeAccountRequest.new
+            session.send Bkblz::V1::AuthorizeAccountRequest.new
 
           yield(session) if block_given?
           session
@@ -43,20 +43,20 @@ module Backblaze
       end
 
       def create_post(url, body=nil, addl_headers={})
-        Backblaze.log.debug { "creating post for request => #{url}" }
+        Bkblz.log.debug { "creating post for request => #{url}" }
         check_authorized
 
         uri = url.is_a?(URI) ? url : URI(url)
         request = Net::HTTP::Post.new uri
 
         if body.is_a? Hash
-          body = Backblaze::MapKeyFormatter.camelcase_keys(body).to_json
+          body = Bkblz::MapKeyFormatter.camelcase_keys(body).to_json
         end
         request.body = body if body
 
         headers = {:"Authorization" => auth_response.authorization_token}
         headers.merge(addl_headers).each do |k,v|
-          Backblaze.log.debug2 { "adding request header => #{k}:#{v}" }
+          Bkblz.log.debug2 { "adding request header => #{k}:#{v}" }
           request.add_field k.to_s, v unless v.nil?
         end
 

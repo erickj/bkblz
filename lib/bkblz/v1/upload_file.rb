@@ -1,9 +1,9 @@
 require "digest/sha1"
 
-module Backblaze
+module Bkblz
   module V1
 
-    TooManyBzInfoHeadersError = Class.new Backblaze::BaseError
+    TooManyBzInfoHeadersError = Class.new Bkblz::BaseError
 
     class UploadFileResponse < Response
       response_model Model::FileInfo
