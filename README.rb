@@ -1,8 +1,10 @@
+# Run `ruby README.rb` for a working demo, but first add your
+# application key and account id in the slots below.
+# Or `gem install bkblz` to begin.
+
 $: << 'lib'
 require 'all'
 
-# Run `ruby README.rb` for a working demo, but first add your
-# applicatoin key and account id in the slots below.
 Bkblz.configure do |config_map|
   config_map.merge!(
     :application_key => "!!! APP KEY !!!",
