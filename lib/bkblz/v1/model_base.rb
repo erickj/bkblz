@@ -1,3 +1,5 @@
+require "yaml"
+
 module Bkblz
   module V1
     module Model
@@ -26,6 +28,10 @@ module Bkblz
 
         def to_map
           @map.dup
+        end
+
+        def to_yaml
+          @map.to_yaml
         end
 
         def to_s

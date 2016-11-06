@@ -1,5 +1,5 @@
-require "bkblz/config"
-require "bkblz/logger"
+require_relative "bkblz/config"
+require_relative "bkblz/logger"
 
 module Bkblz
 
@@ -33,3 +33,5 @@ module Bkblz
     end
   end
 end
+
+require "bkblz/all"

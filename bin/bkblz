@@ -1,0 +1,111 @@
+#!/usr/bin/env ruby
+$: << "lib"
+require "bkblz"
+require "thor"
+require "yaml"
+
+module Bkblz
+
+  module Helper
+    def parse_opts
+      if options[:config]
+        f = options[:config]
+        raise "unreadable config file #{f}" unless ::File.readable? f
+        Bkblz.configure do |map|
+          map.merge YAML.load(::File.read f)
+        end
+      end
+    end
+
+    def print_header(header)
+      puts ""
+      puts "*** #{header} ***"
+      puts ""
+    end
+
+    def print_model(model)
+      puts model.to_yaml
+    end
+  end
+
+  class Bucket < Thor
+    include Helper
+
+    desc "bucket list", "lists all of your buckets"
+    def list
+      parse_opts
+
+      buckets = Bkblz::Task::ListBuckets.run Bkblz.config
+
+      print_header "Buckets"
+      buckets.each do |bucket|
+        puts bucket.bucket_name
+      end
+    end
+
+    desc "bucket create <bucket_name>", "creates a new bucket"
+    def create(bucket_name)
+      parse_opts
+
+      bucket = Bkblz::Task::CreateBucket.run Bkblz.config, :bucket_name => bucket_name
+      print_header "New Bucket"
+      print_model bucket
+    end
+  end
+
+  class File < Thor
+    include Helper
+
+    desc "file upload <bucket_name> <local_file_path>", "upload a local file to B2"
+    def upload(bucket_name, local_file_path)
+      parse_opts
+
+      file_info = Bkblz::Task::UploadFile.run Bkblz.config, {
+                                                :bucket_handle => bucket_name,
+                                                :handle_type => :bucket_name,
+                                                :file_path => local_file_path
+                                              }
+
+      print_header "File Info"
+      print_model file_info
+    end
+
+    desc "file list <bucket_name>", "lists files in a bucket"
+    option :start_at, :desc => "file name to start listing from"
+    option :limit, {
+             :desc => "limit of files to list per request",
+             :default => 100,
+             :type => :numeric
+           }
+    option :all, :desc => "lists all file versions, cannot be used with --start-at"
+    def list(bucket_name)
+      parse_opts
+
+      paged_response = Bkblz::Task::ListFiles.run Bkblz.config, {
+                                                    :start_at => options[:start_at],
+                                                    :limit => options[:limit],
+                                                    :all_versions => options[:all],
+                                                    :bucket_name => bucket_name
+                                                  }
+
+      print_header "Files"
+      paged_response.files.each do |f|
+        puts f.file_name
+      end
+    end
+  end
+
+  class Cli < Thor
+    include Helper
+
+    class_option :config, :desc => "path to a yml config file", :aliases => ["-c"]
+
+    desc "bucket SUBCOMMAND ...ARGS", "manage backblaze buckets"
+    subcommand "bucket", Bucket
+
+    desc "file SUBCOMMAND ...ARGS", "manage backblaze files"
+    subcommand "file", File
+  end
+end
+
+Bkblz::Cli.start ARGV

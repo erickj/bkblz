@@ -26,7 +26,7 @@ module Bkblz
     class << self
       def configure(config=nil, &block)
         map = config ? config.config_map : CONFIG_VARS.dup
-        yield map if block_given?
+        map = yield map if block_given?
         Config.new map
       end
     end
