@@ -9,8 +9,8 @@ require 'bkblz'
 
 Bkblz.configure do |config_map|
   config_map.merge!(
-    :application_key => "*** API KEY ***",
-    :account_id => "*** ACCOUNT ID ***",
+    :application_key => "!!! API KEY !!!",
+    :account_id => "!!! ACCOUNT ID !!!",
     :debug_http => false,
     :log_level => :info # change this to :debug for more info
   )

@@ -17,6 +17,15 @@ module Bkblz
       end
     end
 
+    def run_task(&block)
+      begin
+        yield
+      rescue Bkblz::Task::MissingBucketError => e
+        STDERR.puts "Unknown bucket: #{e.message}"
+        exit 1
+      end
+    end
+
     def print_header(header)
       puts ""
       puts "*** #{header} ***"
@@ -60,14 +69,16 @@ module Bkblz
     def upload(bucket_name, local_file_path)
       parse_opts
 
-      file_info = Bkblz::Task::UploadFile.run Bkblz.config, {
-                                                :bucket_handle => bucket_name,
-                                                :handle_type => :bucket_name,
-                                                :file_path => local_file_path
-                                              }
+      run_task do
+        file_info = Bkblz::Task::UploadFile.run Bkblz.config, {
+                                                  :bucket_handle => bucket_name,
+                                                  :handle_type => :bucket_name,
+                                                  :file_path => local_file_path
+                                                }
 
-      print_header "File Info"
-      print_model file_info
+        print_header "File Info"
+        print_model file_info
+      end
     end
 
     desc "file list <bucket_name>", "lists files in a bucket"
@@ -81,16 +92,20 @@ module Bkblz
     def list(bucket_name)
       parse_opts
 
-      paged_response = Bkblz::Task::ListFiles.run Bkblz.config, {
-                                                    :start_at => options[:start_at],
-                                                    :limit => options[:limit],
-                                                    :all_versions => options[:all],
-                                                    :bucket_name => bucket_name
-                                                  }
+      task = Bkblz::Task::ListFiles.new Bkblz.config
+      run_task do
 
-      print_header "Files"
-      paged_response.files.each do |f|
-        puts f.file_name
+        paged_response = task.run({
+          :start_at => options[:start_at],
+          :limit => options[:limit],
+          :all_versions => options[:all],
+          :bucket_name => bucket_name
+        })
+
+        print_header "Files"
+        paged_response.files.each do |f|
+          puts f.file_name
+        end
       end
     end
   end

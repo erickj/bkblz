@@ -57,18 +57,18 @@ module Bkblz
       extend ClassMethods
       include TaskHelpers
 
-      attr_reader :config
+      attr_reader :config, :result
 
       def initialize(config)
         @config = config
+        @result = nil
       end
 
       def run(task_params)
         BaseTask.check_params task_params
 
-        result = nil
         Bkblz::V1::Session.authorize config do |session|
-          result = run_internal session, task_params
+          @result = run_internal session, task_params
         end
         result
       end
@@ -78,6 +78,5 @@ module Bkblz
         raise 'not implemented'
       end
     end
-
   end
 end
