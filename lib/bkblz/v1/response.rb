@@ -70,7 +70,6 @@ module Bkblz
         self.class.response_model.new @parsed_response.dup
       end
 
-      private
       def parse(http_response)
         parsed_json = JSON.parse http_response.body, {
                                    :allow_nan => true,

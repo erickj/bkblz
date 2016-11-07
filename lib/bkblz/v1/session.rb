@@ -42,28 +42,44 @@ module Bkblz
         URI.join auth_response.api_url, url_suffix
       end
 
-      def create_post(url, body=nil, addl_headers={})
-        Bkblz.log.debug { "creating post for request => #{url}" }
+      def create_get(url, addl_headers={})
+        Bkblz.log.debug { "creating GET for request => #{url}" }
         check_authorized
 
-        uri = url.is_a?(URI) ? url : URI(url)
-        request = Net::HTTP::Post.new uri
+        request = Net::HTTP::Get.new uri_from_url(url)
+        add_request_headers request, addl_headers
+        request
+      end
+
+      def create_post(url, body=nil, addl_headers={})
+        Bkblz.log.debug { "creating POST for request => #{url}" }
+        check_authorized
+
+        request = Net::HTTP::Post.new uri_from_url(url)
 
         if body.is_a? Hash
           body = Bkblz::MapKeyFormatter.camelcase_keys(body).to_json
         end
         request.body = body if body
 
-        headers = {:"Authorization" => auth_response.authorization_token}
-        headers.merge(addl_headers).each do |k,v|
-          Bkblz.log.debug2 { "adding request header => #{k}:#{v}" }
-          request.add_field k.to_s, v unless v.nil?
-        end
+        add_request_headers request, addl_headers
 
         request
       end
 
       private
+      def uri_from_url(url)
+        url.is_a?(URI) ? url : URI(url)
+      end
+
+      def add_request_headers(request, addl_headers)
+        headers = {:"Authorization" => auth_response.authorization_token}
+        headers.merge(addl_headers).each do |k,v|
+          Bkblz.log.debug1(self) { "adding request header => #{k}:#{v}" }
+          request.add_field k.to_s, v unless v.nil?
+        end
+      end
+
       def check_authorized
         raise SessionNotAuthorizedError unless authorized?
       end

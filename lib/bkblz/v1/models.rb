@@ -10,6 +10,11 @@ module Bkblz
         :action, :content_length, :file_id, :file_name, :size, :upload_timestamp
       ]
 
+      # Returned by download_file_by_name and download_file_by_id
+      FileDownload = Model.define *[
+        :body, :content_length, :content_type, :file_id, :file_name, :sha1, :x_bz_info
+      ]
+
       # Returned by upload_file
       FileInfo = Model.define *[
         :account_id, :bucket_id, :content_length, :content_sha1, :content_type,

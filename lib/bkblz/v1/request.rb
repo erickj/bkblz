@@ -58,9 +58,10 @@ module Bkblz
           error_response = ErrorResponse.new response, self
           raise RequestError.create error_response
         end
-        Bkblz.log.debug { "#build_response => #{response}" }
+        Bkblz.log.debug1(self) { "#build_response => #{response}" }
 
         response_class = self.class.response_class || Response
+        Bkblz.log.debug1(self) { "#creating response of class => #{response_class}" }
         response_class.new response, self
       end
 
