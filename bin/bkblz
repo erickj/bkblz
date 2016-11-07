@@ -82,8 +82,7 @@ module Bkblz
 
       file_info = run_task do
         Bkblz::Task::UploadFile.run Bkblz.config, {
-                                                  :bucket_handle => bucket_name,
-                                                  :handle_type => :bucket_name,
+                                                  :bucket_name => bucket_name,
                                                   :file_path => local_file_path
                                                 }
       end
