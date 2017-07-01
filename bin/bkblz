@@ -92,13 +92,14 @@ module Bkblz
     end
 
     desc "file list <bucket_name>", "lists files in a bucket"
-    option :start_at, :desc => "file name to start listing from"
+    option :start_at, :desc => "file name to start listing from, cannot be used with --all"
     option :limit, {
              :desc => "limit of files to list per request",
              :default => 100,
              :type => :numeric
            }
     option :all, :desc => "lists all file versions, cannot be used with --start-at"
+    option :with_id, :type => :boolean, :desc => "include file_id in results"
     def list(bucket_name)
       parse_opts
 
@@ -112,11 +113,30 @@ module Bkblz
           :bucket_name => bucket_name
         })
 
-        print_header "Files"
-        paged_response.files.each do |f|
-          puts f.file_name
+        file_printer = lambda do |file|
+          puts options[:with_id] ?
+            "%s - %s" % [file.file_name, file.file_id] :
+            file.file_name
         end
+
+        print_header "Files"
+        paged_response.files.each &file_printer
       end
+    end
+
+    desc "file info <id>", "displays info for file with <id>"
+    option :id, :desc => "the file id as returned by <file list>"
+    def info(file_id)
+      parse_opts
+
+      file_info = run_task do
+        Bkblz::Task::GetFileInfo.run Bkblz.config, {
+          :file_id => options[:id]
+        }
+      end
+
+      print_header "File Info"
+      print_model file_info
     end
   end
 
