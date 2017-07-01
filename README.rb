@@ -9,6 +9,7 @@ Currently the gem supports the following V1 API calls:
   * b2_create_bucket
   * b2_delete_bucket
   * b2_delete_file_version
+  * b2_get_file_info
   * b2_list_buckets
   * b2_list_file_names
   * b2_list_file_versions

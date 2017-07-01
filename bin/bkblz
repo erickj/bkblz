@@ -91,6 +91,21 @@ module Bkblz
       print_model file_info
     end
 
+    desc "file download <id> <dir>", "downloads file <id> to directory <dir>"
+    def download(file_id, dir_path)
+      parse_opts
+
+      file_info = run_task do
+        Bkblz::Task::DownloadFile.run Bkblz.config, {
+          :file_id => file_id,
+          :dir_path => dir_path
+        }
+      end
+
+      print_header "File Info"
+      print_model file_info
+    end
+
     desc "file list <bucket_name>", "lists files in a bucket"
     option :start_at, :desc => "file name to start listing from, cannot be used with --all"
     option :limit, {
@@ -124,14 +139,13 @@ module Bkblz
       end
     end
 
-    desc "file info <id>", "displays info for file with <id>"
-    option :id, :desc => "the file id as returned by <file list>"
+    desc "file info <file_id>", "displays info for file with <id>"
     def info(file_id)
       parse_opts
 
       file_info = run_task do
         Bkblz::Task::GetFileInfo.run Bkblz.config, {
-          :file_id => options[:id]
+          :file_id => file_id
         }
       end
 
