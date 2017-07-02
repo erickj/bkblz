@@ -44,10 +44,43 @@ module Bkblz
     end
   end
 
+  class Generators < Thor
+    include Helper
+
+    desc "config", "generate a bkblz config"
+    def config
+      map = Bkblz::Config::CONFIG_VARS.dup
+
+      puts "Enter a value for each field and press <enter>."
+      puts "To accept the default just press <enter>:"
+      puts
+      map.inject(map) do |m, (k, v)|
+        print "#{k}: #{v}"
+        input = STDIN.gets.chomp
+        input = v if input.empty?
+        input = case v
+                when Symbol
+                  input.intern
+                when !!v == v # Boolean check
+                  input == 'true'
+                else
+                  input
+                end
+        m[k] = input
+        m
+      end
+
+      puts
+      puts "cat > bkblz.yml <<EOS"
+      puts map.to_yaml
+      puts "EOS"
+    end
+  end
+
   class Bucket < Thor
     include Helper
 
-    desc "bucket list", "lists all of your buckets"
+    desc "list", "lists all of your buckets"
     def list
       parse_opts
 
@@ -61,7 +94,7 @@ module Bkblz
       end
     end
 
-    desc "bucket create <bucket_name>", "creates a new bucket"
+    desc "create <bucket_name>", "creates a new bucket"
     def create(bucket_name)
       parse_opts
 
@@ -76,7 +109,7 @@ module Bkblz
   class File < Thor
     include Helper
 
-    desc "file upload <bucket_name> <local_file_path>", "upload a local file to B2"
+    desc "upload <bucket_name> <local_file_path>", "upload a local file to B2"
     def upload(bucket_name, local_file_path)
       parse_opts
 
@@ -91,7 +124,7 @@ module Bkblz
       print_model file_info
     end
 
-    desc "file download <id> <dir>", "downloads file <id> to directory <dir>"
+    desc "download <id> <dir>", "downloads file <id> to directory <dir>"
     def download(file_id, dir_path)
       parse_opts
 
@@ -106,7 +139,7 @@ module Bkblz
       print_model file_info
     end
 
-    desc "file list <bucket_name>", "lists files in a bucket"
+    desc "list <bucket_name>", "lists files in a bucket"
     option :start_at, :desc => "file name to start listing from, cannot be used with --all"
     option :limit, {
              :desc => "limit of files to list per request",
@@ -139,7 +172,7 @@ module Bkblz
       end
     end
 
-    desc "file info <file_id>", "displays info for file with <id>"
+    desc "info <file_id>", "displays info for file with <id>"
     def info(file_id)
       parse_opts
 
@@ -164,6 +197,9 @@ module Bkblz
 
     desc "file SUBCOMMAND ...ARGS", "manage backblaze files"
     subcommand "file", File
+
+    desc "gen SUBCOMMAND ...ARGS", "generate bkblz files"
+    subcommand "gen", Generators
   end
 end
 
