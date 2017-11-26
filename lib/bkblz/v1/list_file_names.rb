@@ -12,6 +12,7 @@ module Bkblz
       end
     end
 
+    # https://www.backblaze.com/b2/docs/b2_list_file_names.html
     class ListFileNamesRequest < Request
 
       response_class ListFileNamesResponse
@@ -19,12 +20,16 @@ module Bkblz
 
       attr_reader :bucket
 
-      def initialize(bucket, max_file_count=1000, start_file_name=nil)
+      # TODO(erick): Switch start_file_name to a keyword arg
+      def initialize(bucket, max_file_count=1000, start_file_name=nil,
+          prefix: nil, delimiter: nil)
         @bucket = bucket
         @body = {}
         @body[:bucket_id] = bucket.bucket_id
         @body[:max_file_count] = max_file_count
         @body[:start_file_name] = start_file_name if start_file_name
+        @body[:prefix] = prefix if prefix
+        @body[:delimiter] = delimiter if delimiter
       end
 
       def build_request(session)

@@ -148,6 +148,9 @@ module Bkblz
            }
     option :all, :desc => "lists all file versions, cannot be used with --start-at"
     option :with_id, :type => :boolean, :desc => "include file_id in results"
+    option :prefix, :desc => "limits results to those that match the prefix"
+    option :delimiter, :desc => "combine with prefix to search directories, " +
+      "see https://www.backblaze.com/b2/docs/b2_list_file_names.html for usage"
     def list(bucket_name)
       parse_opts
 
@@ -158,7 +161,9 @@ module Bkblz
           :start_at => options[:start_at],
           :limit => options[:limit],
           :all_versions => options[:all],
-          :bucket_name => bucket_name
+          :bucket_name => bucket_name,
+          :prefix => options[:prefix],
+          :delimiter => options[:delimiter]
         })
 
         file_printer = lambda do |file|
