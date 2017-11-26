@@ -74,7 +74,8 @@ module Bkblz
         parsed_json = JSON.parse http_response.body, {
                                    :allow_nan => true,
                                    :symbolize_names => true,
-                                   :max_nesting => 4
+                                   # TODO(erick): Maybe make this configurable?
+                                   :max_nesting => 10
                                  }
         Bkblz::MapKeyFormatter.underscore_keys parsed_json
       end
