@@ -60,7 +60,8 @@ module Bkblz
 
       private
       def url_for_file(session)
-        session.create_url(["file", @bucket.bucket_name, @file_name].join "/")
+        session.create_download_url(
+          ["file", @bucket.bucket_name, @file_name].join "/")
       end
     end
   end

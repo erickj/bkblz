@@ -127,6 +127,25 @@ module Bkblz
       print_model file_info
     end
 
+    desc "downloadbyname <bucket> <name> <dir>", "downloads file by <bucket> " +
+      "and <name> to directory <dir>"
+    def downloadbyname(bucket_name, file_name, dir_path)
+      parse_opts
+
+      file_info = run_task do
+        Bkblz::Task::DownloadFile.run Bkblz.config, {
+          :file_name => file_name,
+          :bucket_name => bucket_name,
+          :dir_path => dir_path,
+          :use_filename => true
+        }
+      end
+
+      print_header "File Info"
+      print_model file_info
+    end
+
+    # TODO(erick): Rename to downloadbyid
     desc "download <id> <dir>", "downloads file <id> to directory <dir>"
     def download(file_id, dir_path)
       parse_opts
@@ -134,7 +153,8 @@ module Bkblz
       file_info = run_task do
         Bkblz::Task::DownloadFile.run Bkblz.config, {
           :file_id => file_id,
-          :dir_path => dir_path
+          :dir_path => dir_path,
+          :use_filename => options[:by_name]
         }
       end
 

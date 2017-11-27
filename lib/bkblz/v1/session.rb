@@ -37,6 +37,11 @@ module Bkblz
         !!auth_response && !!auth_response.authorization_token
       end
 
+      def create_download_url(url_suffix)
+        check_authorized
+        URI.join auth_response.download_url, url_suffix
+      end
+
       def create_url(url_suffix)
         check_authorized
         URI.join auth_response.api_url, url_suffix
