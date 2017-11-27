@@ -218,7 +218,8 @@ module Bkblz
   class Cli < Thor
     include Helper
 
-    class_option :config, :desc => "path to a yml config file", :aliases => ["-c"]
+    class_option :config, :desc => "path to a yml config file", :aliases => ["-c"],
+    :default => ::File.expand_path('~/etc/bkblz/bkblz.yml')
 
     desc "bucket SUBCOMMAND ...ARGS", "manage backblaze buckets"
     subcommand "bucket", Bucket
