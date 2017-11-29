@@ -109,18 +109,26 @@ module Bkblz
   class File < Thor
     include Helper
 
-    desc "upload <bucket_name> <local_file_path>", "upload a local file to B2"
+    desc "upload <bucket_name> <local_file_path>", "upload a local file to B2" +
+      " if <local_file_path> is \"-\" (0x2d), then upload will read from STDIN."
     option :file_name, :desc => "remote file name, if not given the basename" +
-      "of the local file is used"
+      " of the local file is used"
     def upload(bucket_name, local_file_path)
       parse_opts
 
+      params = {
+        :bucket_name => bucket_name,
+        :file_name => options[:file_name]
+      }
+
+      if local_file_path == "-"
+        params[:file_body] = STDIN.read
+      else
+        params[:file_path] = local_file_path
+      end
+
       file_info = run_task do
-        Bkblz::Task::UploadFile.run Bkblz.config, {
-          :bucket_name => bucket_name,
-          :file_path => local_file_path,
-          :file_name => options[:file_name]
-        }
+        Bkblz::Task::UploadFile.run Bkblz.config, params
       end
 
       print_header "File Info"
