@@ -1,6 +1,12 @@
 =begin
 
-This is the bkblz ruby gem, a library for the Backblaze B2 cloud
+tldr:
+$ gem install bkblz
+$ bkblz help
+
+More...
+
+This is the bkblz Ruby gem, a library for the Backblaze B2 cloud
 storage API: https://www.backblaze.com/b2/docs/
 
 Currently the gem supports the following V1 API calls:
