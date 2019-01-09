@@ -15,10 +15,15 @@ module Bkblz
         :body, :content_length, :content_type, :file_id, :file_name, :sha1, :x_bz_info
       ]
 
-      # Returned by upload_file
+      # Returned by upload_file, finish_large_file, start_large_file
       FileInfo = Model.define *[
-        :account_id, :bucket_id, :content_length, :content_sha1, :content_type,
+        :account_id, :action, :bucket_id, :content_length, :content_sha1, :content_type,
         :file_id, :file_info, :file_name
+      ]
+
+      # Returned by upload_file
+      FilePartInfo = Model.define *[
+        :file_id, :part_number, :content_length, :content_sha1, :upload_timestamp,
       ]
 
       # Returned by delete_file_version
@@ -26,6 +31,9 @@ module Bkblz
 
       # Returned by get_upload_url
       UploadAuth = Model.define :bucket_id, :upload_url, :authorization_token
+
+      # Returned by get_upload_part_url
+      UploadPartAuth = Model.define :file_id, :upload_url, :authorization_token
 
       # Possibly returned by any request
       Error = Model.define :status, :code, :message

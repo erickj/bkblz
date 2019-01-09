@@ -9,7 +9,9 @@ module Bkblz
 
       :log_device => :stderr, # [:stdout, :stderr, :devnull, path, fd]
       :log_level => :warn, # [:debug, :info, :warn, :error, :fatal, (-6..-1)]
-      :log_colorize => true
+      :log_colorize => true,
+
+      :large_file_max_chunk_size => 1e8, # 100MB
     }.freeze
 
     attr_reader *CONFIG_VARS.keys, :config_map

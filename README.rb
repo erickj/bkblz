@@ -16,10 +16,14 @@ Currently the gem supports the following V1 API calls:
   * b2_delete_bucket
   * b2_delete_file_version
   * b2_get_file_info
+  * b2_get_upload_part_url
+  * b2_finish_large_file
   * b2_list_buckets
   * b2_list_file_names
   * b2_list_file_versions
+  * b2_start_large_file
   * b2_upload_file
+  * b2_upload_part
   * b2_download_file_by_id
   * b2_download_file_by_name
 
@@ -193,6 +197,8 @@ def run_readme
       byte_range_download = session.send(
         Bkblz::V1::DownloadFileByNameRequest.new bucket, file_name, bytes).to_model
       Bkblz.log.info "file bytes: #{byte_range_download.body}"
+
+      # TODO: add examples for uploading large files by parts... see lib/bkblz/task/upload_file
     rescue => e
       Bkblz.log.error "there was an error: #{e}"
       Bkblz.log.error e.backtrace.join "\n"
