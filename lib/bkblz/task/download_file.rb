@@ -5,6 +5,7 @@ module Bkblz
     class DownloadFile < BaseTask
 
       task_param :dir_path, :required => true
+      task_param :strip_prefix
 
       # for downalod by id
       task_param :file_id
@@ -33,7 +34,12 @@ module Bkblz
           raise "unable to write to directory %s" % dir_path
         end
 
-        f_path = ::File.join dir_path, download_file_info.file_name
+        out_file_name = download_file_info.file_name
+        unless params[:strip_prefix].nil?
+          out_file_name.gsub! params[:strip_prefix], ""
+        end
+
+        f_path = ::File.join dir_path, out_file_name
         if ::File.exists?(f_path) && !::File.writable?(f_path)
           raise "unable to write to existing file: %s" % f_path
         end
